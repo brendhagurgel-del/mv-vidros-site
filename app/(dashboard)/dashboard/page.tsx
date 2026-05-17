@@ -1,3 +1,5 @@
+"use client"
+
 import { MetricCard } from "@/components/ui/metric-card"
 import { RarityBadge } from "@/components/ui/rarity-badge"
 import { StatusBadge } from "@/components/ui/status-badge"
