@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc --noEmit*)",
+      "Bash(pnpm build*)",
+      "Bash(pnpm add*)",
+      "Bash(pnpm install*)",
+      "Bash(pnpm tsc*)",
+      "Bash(git commit*)",
+      "Bash(git push*)",
+      "Bash(git add*)",
+      "Bash(mkdir -p*)",
+      "Bash(which *)",
+      "Bash(printenv*)",
+      "mcp__0a3a3abc-48f4-4940-90a0-6c1c38fb1987__list_projects",
+      "mcp__0a3a3abc-48f4-4940-90a0-6c1c38fb1987__apply_migration",
+      "mcp__0a3a3abc-48f4-4940-90a0-6c1c38fb1987__list_tables",
+      "mcp__0a3a3abc-48f4-4940-90a0-6c1c38fb1987__execute_sql",
+      "mcp__75666627-322d-439c-99be-e650a9e9be8c__deploy_to_vercel",
+      "mcp__75666627-322d-439c-99be-e650a9e9be8c__list_teams",
+      "mcp__75666627-322d-439c-99be-e650a9e9be8c__list_projects",
+      "mcp__75666627-322d-439c-99be-e650a9e9be8c__list_deployments",
+      "mcp__75666627-322d-439c-99be-e650a9e9be8c__get_project",
+      "mcp__75666627-322d-439c-99be-e650a9e9be8c__get_deployment",
+      "mcp__75666627-322d-439c-99be-e650a9e9be8c__get_deployment_build_logs",
+      "mcp__github__push_files",
+      "mcp__github__create_or_update_file",
+      "mcp__github__get_file_contents",
+      "mcp__github__list_commits",
+      "mcp__github__list_branches",
+      "mcp__github__list_pull_requests",
+      "mcp__github__pull_request_read",
+      "mcp__github__get_commit"
+    ]
+  }
+}
