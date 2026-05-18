@@ -17,7 +17,7 @@ import {
 
 import { Header } from "@/components/layout/header"
 import { MetricCard } from "@/components/ui/metric-card"
-import { StatusBadge, type Status } from "@/components/ui/status-badge"
+import { StatusBadge } from "@/components/ui/status-badge"
 import { LMLogoIcon } from "@/components/ui/lm-logo"
 
 const sparkData = [
@@ -93,7 +93,7 @@ function MiniSpark({ color }: { color: string }) {
 // ─── Campaign table data ─────────────────────────────────────────────────────
 const campanhas: {
   nome: string
-  status: Status
+  status: string
   segmento: string
   ultima: string
   proxima: string
@@ -277,7 +277,7 @@ export default function CampanhasPage() {
             label="Campanhas Ativas"
             value={12}
             icon={Megaphone}
-            iconColor="white"
+            color="white"
             trend={3.1}
             sparkline={sparkData}
           />
@@ -285,7 +285,7 @@ export default function CampanhasPage() {
             label="Buscas Agendadas"
             value={27}
             icon={Calendar}
-            iconColor="blue"
+            color="blue"
             trend={12.5}
             sparkline={sparkData}
           />
@@ -293,7 +293,7 @@ export default function CampanhasPage() {
             label="Execuções Hoje"
             value={84}
             icon={Rocket}
-            iconColor="yellow"
+            color="yellow"
             trend={18.6}
             sparkline={sparkData}
           />
@@ -301,7 +301,7 @@ export default function CampanhasPage() {
             label="Mensagens Geradas"
             value={1248}
             icon={MessageSquare}
-            iconColor="blue"
+            color="blue"
             trend={22.7}
             sparkline={sparkData}
           />
@@ -507,7 +507,7 @@ export default function CampanhasPage() {
                           {c.nome}
                         </td>
                         <td className="px-4 py-2.5">
-                          <StatusBadge status={c.status} size="sm" />
+                          <StatusBadge status={c.status} />
                         </td>
                         <td className="px-4 py-2.5 text-[10px] font-mono text-[#888888] whitespace-nowrap">
                           {c.segmento}

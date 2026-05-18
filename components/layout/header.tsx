@@ -1,104 +1,118 @@
 "use client"
+import { usePathname } from "next/navigation"
+import { Search, Calendar, ChevronDown, Bell } from "lucide-react"
 
-import { useState } from "react"
-import { clsx } from "clsx"
-import { Bell, Search, ChevronDown, Calendar, User } from "lucide-react"
+const ROUTE_TITLES: Record<string, string> = {
+  "/dashboard":      "DASHBOARD",
+  "/leads":          "LEADS",
+  "/campanhas":      "CAMPANHAS",
+  "/aprovacoes":     "APROVAÇÕES",
+  "/configuracoes":  "CONFIGURAÇÕES",
+}
+
+function BlinkDots() {
+  return (
+    <span style={{ display: "inline-flex", gap: 3, marginLeft: 10, alignItems: "center" }}>
+      {[0, 1, 2].map((i) => (
+        <span
+          key={i}
+          style={{
+            width: 4, height: 4, borderRadius: "50%",
+            background: "#00AFFF", display: "inline-block",
+            animation: `blink 1.4s ease-in-out ${i * 0.2}s infinite`,
+          }}
+        />
+      ))}
+    </span>
+  )
+}
 
 interface HeaderProps {
-  title: string
+  title?: string
   subtitle?: string
 }
 
 export function Header({ title, subtitle }: HeaderProps) {
-  const [searchFocused, setSearchFocused] = useState(false)
+  const pathname = usePathname()
+  const pageTitle = title ?? ROUTE_TITLES[pathname] ?? pathname.split("/").pop()?.toUpperCase() ?? "PÁGINA"
 
   return (
-    <header className="h-14 bg-[#0D0D0D] border-b border-[#1E1E1E] flex items-center px-5 gap-4 shrink-0">
-      {/* Page title */}
-      <div className="flex items-center gap-2 min-w-0 mr-auto">
-        <h1 className="font-display font-bold text-white text-xl leading-none uppercase tracking-wide">
-          {title}
+    <header style={{
+      height: 56, flexShrink: 0,
+      background: "#0D0D0D", borderBottom: "1px solid #1A1A1A",
+      display: "flex", alignItems: "center", padding: "0 20px", gap: 12,
+    }}>
+      {/* Título */}
+      <div style={{ flex: 1, display: "flex", alignItems: "center" }}>
+        <h1 style={{
+          fontFamily: "var(--font-display)", fontSize: 24, fontWeight: 800,
+          textTransform: "uppercase", letterSpacing: "0.04em", color: "#F0F0F0", margin: 0,
+          display: "flex", alignItems: "center",
+        }}>
+          {pageTitle}
+          {!subtitle && <BlinkDots />}
         </h1>
-        {/* Animated blue pixel dots */}
-        <span
-          className="text-[#00B2FF] font-mono text-xs tracking-widest leading-none"
-          aria-hidden="true"
-        >
-          ·:·
-        </span>
         {subtitle && (
-          <span className="text-[10px] font-mono text-[#555555] hidden md:block">
+          <span style={{ fontFamily: "var(--font-display)", fontSize: 12, color: "#00AFFF", marginLeft: 10, letterSpacing: "0.08em" }}>
             {subtitle}
           </span>
         )}
       </div>
 
-      {/* Search */}
-      <div
-        className={clsx(
-          "hidden md:flex items-center gap-2 border px-3 py-1.5 transition-colors duration-100 w-52",
-          searchFocused
-            ? "border-[#FFD400]/40 bg-[#111111]"
-            : "border-[#1E1E1E] bg-[#111111] hover:border-[#2A2A2A]"
-        )}
-      >
-        <Search size={11} className="text-[#555555] flex-shrink-0" />
+      {/* Busca */}
+      <div style={{
+        position: "relative", width: 240,
+        background: "#111", border: "1px solid #1E1E1E",
+        display: "flex", alignItems: "center", gap: 8, padding: "6px 10px",
+      }}>
+        <Search size={12} style={{ color: "#444", flexShrink: 0 }} />
         <input
-          type="text"
           placeholder="Buscar leads, empresas..."
-          className="bg-transparent text-[11px] font-body text-white flex-1 outline-none placeholder:text-[#444444]"
-          onFocus={() => setSearchFocused(true)}
-          onBlur={() => setSearchFocused(false)}
+          style={{
+            background: "transparent", border: "none", outline: "none",
+            fontFamily: "var(--font-body)", fontSize: 12, color: "#888", width: "100%",
+          }}
         />
       </div>
 
-      {/* Date picker */}
-      <button
-        className={clsx(
-          "hidden sm:flex items-center gap-2 px-3 py-1.5",
-          "border border-[#1E1E1E] bg-[#111111]",
-          "hover:border-[#2A2A2A] transition-colors"
-        )}
-      >
-        <Calendar size={11} className="text-[#FFD400]" />
-        <span className="text-[11px] font-display font-bold text-white whitespace-nowrap">
-          Hoje, 14 de Mai
-        </span>
-        <ChevronDown size={10} className="text-[#555555]" />
+      {/* Data */}
+      <button style={{
+        display: "flex", alignItems: "center", gap: 6,
+        background: "#111", border: "1px solid #1E1E1E",
+        padding: "6px 10px", color: "#666", cursor: "pointer",
+        fontFamily: "var(--font-display)", fontSize: 12, fontWeight: 600,
+      }}>
+        <Calendar size={12} style={{ color: "#FFD400" }} />
+        Hoje, 14 de Mai
+        <ChevronDown size={11} style={{ color: "#444" }} />
       </button>
 
-      {/* Notifications */}
-      <button
-        className={clsx(
-          "relative w-8 h-8 flex items-center justify-center flex-shrink-0",
-          "border border-[#1E1E1E] bg-[#111111]",
-          "text-[#888888] hover:text-white hover:border-[#2A2A2A] transition-colors"
-        )}
-        aria-label="Notificações"
-      >
-        <Bell size={13} />
-        <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-[#FFD400]" />
+      {/* Pixel decorativo */}
+      <span style={{ width: 6, height: 6, background: "#FFD400", flexShrink: 0, display: "block" }} />
+
+      {/* Bell */}
+      <button style={{ background: "transparent", border: "none", cursor: "pointer", position: "relative", padding: 4 }}>
+        <Bell size={16} style={{ color: "#555" }} />
+        <span style={{
+          position: "absolute", top: 2, right: 2,
+          width: 6, height: 6, borderRadius: "50%",
+          background: "#FFD400", border: "1px solid #0D0D0D",
+        }} />
       </button>
 
-      {/* User */}
-      <button
-        className={clsx(
-          "flex items-center gap-2.5 px-2.5 py-1.5 flex-shrink-0",
-          "border border-[#1E1E1E] bg-[#111111]",
-          "hover:border-[#2A2A2A] transition-colors"
-        )}
-      >
-        {/* Avatar */}
-        <div className="w-6 h-6 bg-[#333333] border border-[#3A3A3A] flex items-center justify-center overflow-hidden">
-          <User size={12} className="text-[#888888]" />
+      {/* Usuário */}
+      <button style={{ display: "flex", alignItems: "center", gap: 8, background: "transparent", border: "none", cursor: "pointer" }}>
+        <div style={{
+          width: 28, height: 28, borderRadius: "50%",
+          background: "#222", border: "1px solid #333",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontFamily: "var(--font-display)", fontSize: 11, fontWeight: 700, color: "#888",
+        }}>JS</div>
+        <div style={{ textAlign: "left" }}>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: 12, fontWeight: 600, color: "#CCC" }}>João Silva</div>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: 10, color: "#555" }}>Admin</div>
         </div>
-        <div className="hidden sm:flex flex-col items-start leading-none gap-0.5">
-          <span className="text-[11px] font-display font-bold text-white">
-            João Silva
-          </span>
-          <span className="text-[9px] font-mono text-[#888888]">Admin</span>
-        </div>
-        <ChevronDown size={10} className="text-[#555555]" />
+        <ChevronDown size={11} style={{ color: "#444" }} />
       </button>
     </header>
   )

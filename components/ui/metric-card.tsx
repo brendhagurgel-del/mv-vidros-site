@@ -1,153 +1,69 @@
 "use client"
-
-import { type LucideIcon, TrendingUp, TrendingDown } from "lucide-react"
-import { clsx } from "clsx"
-import { AnimatedCounter } from "./animated-counter"
-
-interface SparkPoint {
-  value: number
-}
+import { LucideIcon } from "lucide-react"
+import { Sparkline } from "./sparkline"
 
 interface MetricCardProps {
   label: string
-  value: number
-  icon: LucideIcon
-  iconColor?: "white" | "yellow" | "blue" | "gray"
-  trend?: number
-  trendLabel?: string
-  sparkline?: SparkPoint[]
-  prefix?: string
+  value: string | number
   suffix?: string
-  className?: string
+  icon: LucideIcon
+  trend?: number
+  color?: "white" | "yellow" | "blue" | "gray" | "green"
+  sparkline?: { value: number }[]
 }
 
-const iconColorConfig = {
-  white: "text-white bg-white/10",
-  yellow: "text-[#FFD400] bg-[#FFD400]/10",
-  blue: "text-[#00B2FF] bg-[#00B2FF]/10",
-  gray: "text-[#888888] bg-[#888888]/10",
+const COLOR_MAP = {
+  white:  { text: "#F0F0F0", spark: "#444444", icon: "#888888" },
+  yellow: { text: "#FFD400", spark: "#FFD400", icon: "#FFD400" },
+  blue:   { text: "#00AFFF", spark: "#00AFFF", icon: "#00AFFF" },
+  gray:   { text: "#666666", spark: "#333333", icon: "#555555" },
+  green:  { text: "#12D36B", spark: "#12D36B", icon: "#12D36B" },
 }
 
-function MiniSparkline({ data }: { data: SparkPoint[] }) {
-  if (!data.length) return null
-  const max = Math.max(...data.map((d) => d.value))
-  const min = Math.min(...data.map((d) => d.value))
-  const range = max - min || 1
-  const height = 24
-  const width = 60
-  const step = width / (data.length - 1)
-
-  const points = data
-    .map((d, i) => {
-      const x = i * step
-      const y = height - ((d.value - min) / range) * height
-      return `${x},${y}`
-    })
-    .join(" ")
+export function MetricCard({ label, value, suffix, icon: Icon, trend, color = "white", sparkline }: MetricCardProps) {
+  const c = COLOR_MAP[color]
+  const sparkData = sparkline?.map((s) => s.value)
+  const displayValue = typeof value === "number" ? value.toLocaleString("pt-BR") : value
 
   return (
-    <svg
-      width={width}
-      height={height}
-      viewBox={`0 0 ${width} ${height}`}
-      className="overflow-visible opacity-60"
-      aria-hidden="true"
-    >
-      <polyline
-        points={points}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
+    <div style={{ position: "relative", background: "#111111", border: "1px solid #1A1A1A", display: "flex", flexDirection: "column", minHeight: 110 }}>
+      {/* HUD corners */}
+      {(["tl","tr","bl","br"] as const).map((pos) => (
+        <span key={pos} style={{
+          position: "absolute", width: 7, height: 7, pointerEvents: "none",
+          top:    pos.includes("t") ? 0 : "auto", bottom: pos.includes("b") ? 0 : "auto",
+          left:   pos.includes("l") ? 0 : "auto", right:  pos.includes("r") ? 0 : "auto",
+          borderTop:    pos.includes("t") ? "1.5px solid #2A2A2A" : undefined,
+          borderBottom: pos.includes("b") ? "1.5px solid #2A2A2A" : undefined,
+          borderLeft:   pos.includes("l") ? "1.5px solid #2A2A2A" : undefined,
+          borderRight:  pos.includes("r") ? "1.5px solid #2A2A2A" : undefined,
+        }} />
+      ))}
 
-export function MetricCard({
-  label,
-  value,
-  icon: Icon,
-  iconColor = "white",
-  trend,
-  trendLabel,
-  sparkline,
-  prefix,
-  suffix,
-  className,
-}: MetricCardProps) {
-  const isPositive = trend !== undefined && trend >= 0
-
-  return (
-    <div
-      className={clsx(
-        "relative border border-[#2A2A2A] bg-[#1A1A1A] p-4 transition-all duration-150",
-        "hover:border-[#3A3A3A] hover:bg-[#1E1E1E] group",
-        className
-      )}
-    >
-      {/* Pixel corner decorations */}
-      <span className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-[#FFD400]/60" aria-hidden="true" />
-      <span className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-[#FFD400]/60" aria-hidden="true" />
-      <span className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-[#FFD400]/60" aria-hidden="true" />
-      <span className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-[#FFD400]/60" aria-hidden="true" />
-
-      <div className="flex items-start justify-between mb-3">
-        <p className="text-[10px] font-display font-bold text-[#888888] uppercase tracking-widest">
-          {label}
-        </p>
-        <div
-          className={clsx(
-            "w-7 h-7 rounded-none flex items-center justify-center flex-shrink-0",
-            iconColorConfig[iconColor]
-          )}
-        >
-          <Icon size={14} aria-hidden="true" />
-        </div>
-      </div>
-
-      <div className="flex items-end justify-between">
-        <div>
-          <p className="font-display font-bold text-2xl text-white leading-none">
-            {prefix}
-            <AnimatedCounter value={value} />
-            {suffix}
-          </p>
-          {trend !== undefined && (
-            <div
-              className={clsx(
-                "flex items-center gap-0.5 mt-1",
-                isPositive ? "text-[#00CC66]" : "text-[#FF4444]"
-              )}
-            >
-              {isPositive ? (
-                <TrendingUp size={10} aria-hidden="true" />
-              ) : (
-                <TrendingDown size={10} aria-hidden="true" />
-              )}
-              <span className="text-[9px] font-mono">
-                {isPositive ? "+" : ""}
-                {trend}%{trendLabel ? ` ${trendLabel}` : ""}
-              </span>
-            </div>
-          )}
+      <div style={{ flex: 1, padding: "12px 12px 8px" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 8 }}>
+          <span style={{ fontFamily: "var(--font-display)", fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.12em", color: "#666" }}>
+            {label}
+          </span>
+          <Icon size={15} style={{ color: c.icon, opacity: 0.8, marginTop: 1, flexShrink: 0 }} />
         </div>
 
-        {sparkline && sparkline.length > 1 && (
-          <div
-            className={clsx(
-              iconColor === "yellow"
-                ? "text-[#FFD400]"
-                : iconColor === "blue"
-                ? "text-[#00B2FF]"
-                : "text-[#888888]"
-            )}
-          >
-            <MiniSparkline data={sparkline} />
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 34, fontWeight: 700, lineHeight: 1, color: c.text, marginBottom: 4 }}>
+          {displayValue}{suffix && <span style={{ fontSize: 18, opacity: 0.7 }}>{suffix}</span>}
+        </div>
+
+        {trend !== undefined && (
+          <div style={{ fontFamily: "var(--font-display)", fontSize: 11, fontWeight: 600, color: trend >= 0 ? "#12D36B" : "#E03535" }}>
+            {trend >= 0 ? "↑" : "↓"} {Math.abs(trend)}%
           </div>
         )}
       </div>
+
+      {sparkData && sparkData.length > 1 && (
+        <div style={{ marginTop: "auto" }}>
+          <Sparkline data={sparkData} color={c.spark} height={24} />
+        </div>
+      )}
     </div>
   )
 }

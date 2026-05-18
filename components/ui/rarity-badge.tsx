@@ -1,86 +1,39 @@
-import { clsx } from "clsx"
+export type Rarity = "LENDÁRIO" | "RARO" | "COMUM" | "BAIXO"
 
-type Rarity = "LENDÁRIO" | "RARO" | "COMUM" | "BAIXO"
-
-interface RarityBadgeProps {
-  score?: number
-  rarity?: Rarity
-  className?: string
-  size?: "sm" | "md" | "lg"
+const RARITY_STYLES: Record<Rarity, { bg: string; border: string; text: string }> = {
+  "LENDÁRIO": { bg: "#FFD400",                border: "#FFD400", text: "#000000" },
+  "RARO":     { bg: "transparent",            border: "#00AFFF", text: "#00AFFF" },
+  "COMUM":    { bg: "transparent",            border: "#444444", text: "#666666" },
+  "BAIXO":    { bg: "rgba(255,255,255,0.03)", border: "#2A2A2A", text: "#444444" },
 }
 
-function getRarityFromScore(score: number): Rarity {
+export function getRarityFromScore(score: number): Rarity {
   if (score >= 85) return "LENDÁRIO"
   if (score >= 70) return "RARO"
   if (score >= 50) return "COMUM"
   return "BAIXO"
 }
 
-const rarityConfig: Record<
-  Rarity,
-  { bg: string; text: string; border: string; dot: string }
-> = {
-  "LENDÁRIO": {
-    bg: "bg-[#FFD400]/10",
-    text: "text-[#FFD400]",
-    border: "border-[#FFD400]/40",
-    dot: "bg-[#FFD400]",
-  },
-  RARO: {
-    bg: "bg-[#00B2FF]/10",
-    text: "text-[#00B2FF]",
-    border: "border-[#00B2FF]/40",
-    dot: "bg-[#00B2FF]",
-  },
-  COMUM: {
-    bg: "bg-[#555555]/20",
-    text: "text-[#AAAAAA]",
-    border: "border-[#555555]/40",
-    dot: "bg-[#555555]",
-  },
-  BAIXO: {
-    bg: "bg-[#333333]/30",
-    text: "text-[#666666]",
-    border: "border-[#333333]/40",
-    dot: "bg-[#444444]",
-  },
+interface RarityBadgeProps {
+  rarity?: Rarity
+  score?: number
+  size?: "sm" | "md" | "lg"
 }
 
-const sizeConfig = {
-  sm: "text-[9px] px-1.5 py-0.5 gap-1",
-  md: "text-[10px] px-2 py-1 gap-1.5",
-  lg: "text-xs px-3 py-1.5 gap-2",
-}
-
-export function RarityBadge({
-  score,
-  rarity: rarityProp,
-  className,
-  size = "md",
-}: RarityBadgeProps) {
-  const rarity =
-    rarityProp ?? (score !== undefined ? getRarityFromScore(score) : "COMUM")
-  const config = rarityConfig[rarity]
+export function RarityBadge({ rarity, score, size = "md" }: RarityBadgeProps) {
+  const r: Rarity = rarity ?? getRarityFromScore(score ?? 0)
+  const s = RARITY_STYLES[r]
+  const fontSize = size === "sm" ? 8 : size === "lg" ? 11 : 9
+  const padding  = size === "sm" ? "2px 5px" : size === "lg" ? "3px 10px" : "2px 7px"
 
   return (
-    <span
-      className={clsx(
-        "inline-flex items-center rounded-none border font-display font-bold tracking-widest uppercase",
-        config.bg,
-        config.text,
-        config.border,
-        sizeConfig[size],
-        className
-      )}
-    >
-      <span
-        className={clsx("w-1.5 h-1.5 rounded-none flex-shrink-0", config.dot)}
-        aria-hidden="true"
-      />
-      {rarity}
+    <span style={{
+      background: s.bg, border: `1px solid ${s.border}`, color: s.text,
+      fontFamily: "var(--font-display)", fontSize, fontWeight: 700,
+      textTransform: "uppercase", letterSpacing: "0.08em",
+      padding, borderRadius: 0, display: "inline-block", lineHeight: "14px", whiteSpace: "nowrap",
+    }}>
+      {r}
     </span>
   )
 }
-
-export { getRarityFromScore }
-export type { Rarity }

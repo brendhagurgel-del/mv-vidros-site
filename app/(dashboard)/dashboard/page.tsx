@@ -53,12 +53,12 @@ export default function DashboardPage() {
 
         {/* Metric cards */}
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2">
-          <MetricCard label="Leads Encontrados" value={1248} icon={Users} iconColor="white" trend={18} sparkline={spark} />
-          <MetricCard label="Quentes" value={843} icon={Flame} iconColor="yellow" trend={12} sparkline={spark} />
-          <MetricCard label="Médios" value={323} icon={Diamond} iconColor="blue" trend={22} sparkline={spark} />
-          <MetricCard label="Fracos" value={82} icon={Shield} iconColor="gray" trend={-5} sparkline={spark} />
-          <MetricCard label="Campanhas Ativas" value={12} icon={Megaphone} iconColor="white" trend={3} sparkline={spark} />
-          <MetricCard label="Msg Pendentes" value={97} icon={MessageSquare} iconColor="blue" trend={8} sparkline={spark} />
+          <MetricCard label="Leads Encontrados" value={1248} icon={Users} color="white" trend={18} sparkline={spark} />
+          <MetricCard label="Quentes" value={843} icon={Flame} color="yellow" trend={12} sparkline={spark} />
+          <MetricCard label="Médios" value={323} icon={Diamond} color="blue" trend={22} sparkline={spark} />
+          <MetricCard label="Fracos" value={82} icon={Shield} color="gray" trend={-5} sparkline={spark} />
+          <MetricCard label="Campanhas Ativas" value={12} icon={Megaphone} color="white" trend={3} sparkline={spark} />
+          <MetricCard label="Msg Pendentes" value={97} icon={MessageSquare} color="blue" trend={8} sparkline={spark} />
         </div>
 
         {/* Chart row */}

@@ -9,94 +9,50 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        display: ["Barlow Condensed", "sans-serif"],
+        body:    ["Barlow", "sans-serif"],
+        mono:    ["JetBrains Mono", "monospace"],
+      },
       colors: {
-        yellow: {
-          300: "#FFE033",
-          400: "#FFD400",
-          500: "#FFB800",
-        },
-        blue: {
-          300: "#33C4FF",
-          400: "#00B2FF",
-          500: "#0088CC",
-          dark: "#0088CC",
-        },
+        yellow:  { DEFAULT: "#FFD400", 2: "#FFC800" },
+        blue:    { DEFAULT: "#00AFFF", 2: "#0088CC" },
+        green:   { DEFAULT: "#12D36B" },
+        orange:  { DEFAULT: "#FF6B00" },
+        red:     { DEFAULT: "#E03535" },
         dark: {
-          base: "#0D0D0D",
-          card: "#1A1A1A",
-          "card-hover": "#222222",
-          sidebar: "#111111",
+          base:    "#080808",
+          card:    "#111111",
+          card2:   "#161616",
+          sidebar: "#0D0D0D",
         },
         border: {
-          DEFAULT: "#2A2A2A",
-          yellow: "#FFD400",
-          blue: "#00B2FF",
-        },
-        rarity: {
-          lendario: "#FFD400",
-          raro: "#00B2FF",
-          comum: "#555555",
-          baixo: "#333333",
+          dim:    "#1A1A1A",
+          tech:   "#252525",
+          active: "#2A2A2A",
         },
       },
-      fontFamily: {
-        pixel: ["PixelCraft", "monospace"],
-        display: ["Rajdhani", "sans-serif"],
-        body: ["Inter", "sans-serif"],
-        mono: ["JetBrains Mono", "monospace"],
-      },
+      borderRadius: { none: "0px", DEFAULT: "0px", sm: "0px", md: "0px", lg: "0px", xl: "0px", full: "9999px" },
       animation: {
-        "pixel-fly": "pixelFly 0.8s ease-out forwards",
-        "pulse-yellow": "pulseYellow 2s ease-in-out infinite",
-        blink: "blink 1s step-end infinite",
-        "slide-in": "slideIn 0.3s ease-out",
-        "counter-up": "counterUp 0.6s ease-out",
-        "spin-slow": "spin 8s linear infinite",
-        "fade-in": "fadeIn 0.4s ease-out",
-        "scale-in": "scaleIn 0.2s ease-out",
+        blink:    "blink 1.4s ease-in-out infinite",
+        pulseDot: "pulse-dot 2s ease-in-out infinite",
+        slideIn:  "slideIn 0.25s ease-out",
+        fadeIn:   "fadeIn 0.3s ease-out",
       },
       keyframes: {
-        pixelFly: {
-          "0%": { transform: "translateX(0) translateY(0)", opacity: "1" },
-          "100%": {
-            transform: "translateX(80px) translateY(-20px)",
-            opacity: "0",
-          },
-        },
-        pulseYellow: {
-          "0%,100%": { boxShadow: "0 0 5px rgba(255,212,0,0.2)" },
-          "50%": { boxShadow: "0 0 25px rgba(255,212,0,0.6)" },
-        },
-        blink: {
-          "0%,100%": { opacity: "1" },
-          "50%": { opacity: "0" },
-        },
-        slideIn: {
-          "0%": { transform: "translateX(100%)", opacity: "0" },
-          "100%": { transform: "translateX(0)", opacity: "1" },
-        },
-        counterUp: {
-          "0%": { transform: "translateY(10px)", opacity: "0" },
-          "100%": { transform: "translateY(0)", opacity: "1" },
-        },
-        fadeIn: {
-          "0%": { opacity: "0" },
-          "100%": { opacity: "1" },
-        },
-        scaleIn: {
-          "0%": { transform: "scale(0.9)", opacity: "0" },
-          "100%": { transform: "scale(1)", opacity: "1" },
-        },
+        blink:    { "0%,100%": { opacity: "1" }, "50%": { opacity: "0.2" } },
+        "pulse-dot": { "0%,100%": { opacity: "1", transform: "scale(1)" }, "50%": { opacity: "0.6", transform: "scale(0.85)" } },
+        slideIn:  { "0%": { transform: "translateX(16px)", opacity: "0" }, "100%": { transform: "translateX(0)", opacity: "1" } },
+        fadeIn:   { "0%": { opacity: "0" }, "100%": { opacity: "1" } },
       },
       boxShadow: {
-        "glow-yellow": "0 0 20px rgba(255,212,0,0.2)",
-        "glow-yellow-lg": "0 0 40px rgba(255,212,0,0.35)",
-        "glow-blue": "0 0 20px rgba(0,178,255,0.2)",
-        "glow-blue-lg": "0 0 40px rgba(0,178,255,0.35)",
+        "glow-yellow": "0 0 20px rgba(255,212,0,0.15)",
+        "glow-blue":   "0 0 20px rgba(0,175,255,0.12)",
+        "glow-green":  "0 0 20px rgba(18,211,107,0.12)",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [],
 }
 
 export default config

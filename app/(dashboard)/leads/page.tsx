@@ -72,10 +72,10 @@ export default function LeadsPage() {
 
             {/* Metric cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-              <MetricCard label="Total de Leads" value={1248} icon={Users} iconColor="white" trend={18} sparkline={spark} />
-              <MetricCard label="Novos Hoje" value={84} icon={Flame} iconColor="yellow" trend={24} sparkline={spark} />
-              <MetricCard label="Qualificados" value={323} icon={Diamond} iconColor="blue" trend={22} sparkline={spark} />
-              <MetricCard label="Taxa Média de Conversão" value={25} suffix="%" icon={Target} iconColor="white" trend={7} sparkline={spark} />
+              <MetricCard label="Total de Leads" value={1248} icon={Users} color="white" trend={18} sparkline={spark} />
+              <MetricCard label="Novos Hoje" value={84} icon={Flame} color="yellow" trend={24} sparkline={spark} />
+              <MetricCard label="Qualificados" value={323} icon={Diamond} color="blue" trend={22} sparkline={spark} />
+              <MetricCard label="Taxa Média de Conversão" value={25} suffix="%" icon={Target} color="white" trend={7} sparkline={spark} />
             </div>
 
             {/* Filters */}

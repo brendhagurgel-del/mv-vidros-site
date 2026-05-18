@@ -1,124 +1,102 @@
 "use client"
-
-import { useState } from "react"
 import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
+  AreaChart, Area, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer,
 } from "recharts"
-import { clsx } from "clsx"
+import { useState } from "react"
 
-const data30d = [
-  { date: "15 Abr", leads: 210 },
-  { date: "17 Abr", leads: 280 },
-  { date: "19 Abr", leads: 240 },
-  { date: "21 Abr", leads: 390 },
-  { date: "23 Abr", leads: 320 },
-  { date: "25 Abr", leads: 460 },
-  { date: "27 Abr", leads: 410 },
-  { date: "29 Abr", leads: 550 },
-  { date: "01 Mai", leads: 480 },
-  { date: "03 Mai", leads: 600 },
-  { date: "05 Mai", leads: 560 },
-  { date: "07 Mai", leads: 680 },
-  { date: "09 Mai", leads: 640 },
-  { date: "11 Mai", leads: 720 },
-  { date: "14 Mai", leads: 900 },
-]
+interface ChartPoint { date: string; leads: number; conversions?: number }
 
-const periods = ["Últimos 7 dias", "Últimos 30 dias", "Últimos 90 dias"]
+const PERIODS = ["7 dias", "15 dias", "30 dias", "90 dias"] as const
 
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (!active || !payload?.length) return null
-  return (
-    <div className="bg-[#111111] border border-[#2A2A2A] px-3 py-2">
-      <p className="text-[9px] font-mono text-[#888888] mb-1">{label}</p>
-      <p className="text-[13px] font-display font-bold text-[#FFD400]">
-        {payload[0].value.toLocaleString("pt-BR")} leads
-      </p>
-    </div>
-  )
+const generateData = (days: number): ChartPoint[] => {
+  return Array.from({ length: days }, (_, i) => {
+    const d = new Date()
+    d.setDate(d.getDate() - (days - 1 - i))
+    const label = `${d.getDate()} ${d.toLocaleString("pt-BR", { month: "short" })}`
+    const base = 200 + Math.random() * 800
+    return { date: label, leads: Math.round(base), conversions: Math.round(base * 0.25) }
+  }).filter((_, i) => i % Math.ceil(days / 12) === 0 || days <= 15)
 }
 
 export function LeadsChart() {
-  const [period, setPeriod] = useState("Últimos 30 dias")
+  const [period, setPeriod] = useState<(typeof PERIODS)[number]>("30 dias")
+  const days = period === "7 dias" ? 7 : period === "15 dias" ? 15 : period === "90 dias" ? 90 : 30
+  const data = generateData(days)
+
+  const total  = data.reduce((s, d) => s + d.leads, 0)
+  const avg    = Math.round(total / data.length)
+  const conv   = data.reduce((s, d) => s + (d.conversions ?? 0), 0)
+  const convPct = ((conv / total) * 100).toFixed(1)
 
   return (
-    <div className="relative border border-[#1E1E1E] bg-[#0A0A0A] p-4">
-      {/* Pixel corners */}
-      <span className="absolute top-0 left-0 w-2 h-2 border-t border-l border-[#FFD400]/40" />
-      <span className="absolute top-0 right-0 w-2 h-2 border-t border-r border-[#FFD400]/40" />
-      <span className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-[#FFD400]/40" />
-      <span className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[#FFD400]/40" />
+    <div style={{ background: "#111111", border: "1px solid #1A1A1A", padding: 16, position: "relative", height: "100%" }}>
+      {/* HUD corners */}
+      {(["tl","tr","bl","br"] as const).map((pos) => (
+        <span key={pos} style={{
+          position:"absolute", width:8, height:8, pointerEvents:"none",
+          top: pos.includes("t") ? 0 : "auto", bottom: pos.includes("b") ? 0 : "auto",
+          left: pos.includes("l") ? 0 : "auto", right: pos.includes("r") ? 0 : "auto",
+          borderTop:    pos.includes("t") ? "1.5px solid #2A2A2A" : undefined,
+          borderBottom: pos.includes("b") ? "1.5px solid #2A2A2A" : undefined,
+          borderLeft:   pos.includes("l") ? "1.5px solid #2A2A2A" : undefined,
+          borderRight:  pos.includes("r") ? "1.5px solid #2A2A2A" : undefined,
+        }} />
+      ))}
 
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-[10px] font-display font-bold text-[#888888] uppercase tracking-widest">
-          Leads Encontrados (Últimos 30 dias)
-        </h3>
-        <select
-          value={period}
-          onChange={(e) => setPeriod(e.target.value)}
-          className="bg-[#111111] border border-[#2A2A2A] text-[10px] font-display font-bold text-white px-2 py-1 outline-none"
-        >
-          {periods.map((p) => (
-            <option key={p} value={p}>{p}</option>
+      {/* Header */}
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
+        <span style={{ fontFamily:"var(--font-display)", fontSize:11, fontWeight:700, color:"#888", textTransform:"uppercase", letterSpacing:"0.12em" }}>
+          LEADS ENCONTRADOS (ÚLTIMOS {period.toUpperCase()})
+        </span>
+        <div style={{ display:"flex", gap:4 }}>
+          {PERIODS.map((p) => (
+            <button key={p} onClick={() => setPeriod(p)} style={{
+              background: p === period ? "#FFD400" : "transparent",
+              color: p === period ? "#000" : "#555",
+              border: `1px solid ${p === period ? "#FFD400" : "#2A2A2A"}`,
+              padding: "3px 8px", cursor:"pointer",
+              fontFamily:"var(--font-display)", fontSize:10, fontWeight:700,
+              textTransform:"uppercase", letterSpacing:"0.06em", borderRadius:0,
+            }}>
+              {p}
+            </button>
           ))}
-        </select>
+        </div>
       </div>
 
-      <ResponsiveContainer width="100%" height={160}>
-        <AreaChart data={data30d} margin={{ top: 4, right: 0, left: -20, bottom: 0 }}>
+      {/* Chart */}
+      <ResponsiveContainer width="100%" height={180}>
+        <AreaChart data={data} margin={{ top:8, right:4, left:-20, bottom:0 }}>
           <defs>
-            <linearGradient id="leadsGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#FFD400" stopOpacity={0.25} />
-              <stop offset="95%" stopColor="#FFD400" stopOpacity={0} />
+            <linearGradient id="yellowFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stopColor="#FFD400" stopOpacity={0.15} />
+              <stop offset="100%" stopColor="#FFD400" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <XAxis
-            dataKey="date"
-            tick={{ fill: "#555555", fontSize: 9, fontFamily: "monospace" }}
-            axisLine={false}
-            tickLine={false}
-            interval={2}
+          <CartesianGrid strokeDasharray="1 8" stroke="#1A1A1A" vertical={false} />
+          <XAxis dataKey="date" tick={{ fontFamily:"var(--font-display)", fontSize:10, fill:"#444" }} axisLine={false} tickLine={false} tickMargin={8} />
+          <YAxis tick={{ fontFamily:"var(--font-display)", fontSize:10, fill:"#444" }} axisLine={false} tickLine={false} />
+          <Tooltip
+            contentStyle={{ background:"#161616", border:"1px solid #2A2A2A", borderRadius:0, fontFamily:"var(--font-display)", fontSize:12 }}
+            labelStyle={{ color:"#FFD400" }}
+            itemStyle={{ color:"#F0F0F0" }}
           />
-          <YAxis
-            tick={{ fill: "#555555", fontSize: 9, fontFamily: "monospace" }}
-            axisLine={false}
-            tickLine={false}
-          />
-          <Tooltip content={<CustomTooltip />} cursor={{ stroke: "#FFD400", strokeWidth: 1, strokeDasharray: "4 4" }} />
-          <Area
-            type="monotone"
-            dataKey="leads"
-            stroke="#FFD400"
-            strokeWidth={2}
-            fill="url(#leadsGrad)"
-            dot={false}
-            activeDot={{ r: 4, fill: "#FFD400", stroke: "#0D0D0D", strokeWidth: 2 }}
-          />
+          <Area type="monotone" dataKey="leads" stroke="#FFD400" strokeWidth={2} fill="url(#yellowFill)" dot={false}
+            activeDot={{ r:4, fill:"#FFD400", stroke:"#111", strokeWidth:2 }} />
         </AreaChart>
       </ResponsiveContainer>
 
       {/* Stats row */}
-      <div className="flex items-center gap-6 mt-3 pt-3 border-t border-[#1A1A1A]">
+      <div style={{ display:"flex", gap:24, marginTop:12, paddingTop:12, borderTop:"1px solid #1A1A1A" }}>
         {[
-          { label: "Novos Leads", value: "1.248", trend: "+18,6%", color: "text-[#FFD400]" },
-          { label: "Média Diária", value: "41,6", trend: "+11,2%", color: "text-[#00B2FF]" },
-          { label: "Taxa de Conversão", value: "25,8%", trend: "+7,4%", color: "text-[#00CC66]" },
-        ].map((s) => (
-          <div key={s.label}>
-            <p className="text-[8px] font-mono text-[#555555] uppercase tracking-wider mb-0.5">
-              {s.label}
-            </p>
-            <div className="flex items-baseline gap-1.5">
-              <span className={clsx("text-lg font-display font-bold leading-none", s.color)}>
-                {s.value}
-              </span>
-              <span className="text-[9px] font-mono text-[#00CC66]">{s.trend}</span>
-            </div>
+          { label:"↗ NOVOS LEADS", value: total.toLocaleString("pt-BR"), color:"#F0F0F0" },
+          { label:"● MÉDIA DIÁRIA", value: avg.toLocaleString("pt-BR"), color:"#FFD400" },
+          { label:"◆ TAXA CONVERSÃO", value: `${convPct}%`, color:"#00AFFF" },
+        ].map(({ label, value, color }) => (
+          <div key={label}>
+            <div style={{ fontFamily:"var(--font-display)", fontSize:9, color:"#555", textTransform:"uppercase", letterSpacing:"0.1em", marginBottom:2 }}>{label}</div>
+            <div style={{ fontFamily:"var(--font-display)", fontSize:20, fontWeight:700, color }}>{value}</div>
           </div>
         ))}
       </div>

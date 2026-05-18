@@ -1,116 +1,40 @@
-import { clsx } from "clsx"
-
-type Status =
-  | "NOVO"
-  | "ANALISADO"
-  | "PRONTO"
-  | "AGUARDANDO"
-  | "ENVIADO"
-  | "ATIVA"
-  | "PAUSADA"
-  | "AGENDADA"
-  | "CONCLUÍDA"
-  | "PENDENTE"
-  | "APROVADA"
-  | "REJEITADA"
-
-interface StatusBadgeProps {
-  status: Status
-  className?: string
-  size?: "sm" | "md"
+const STATUS_STYLES: Record<string, { bg: string; border: string; text: string; dot?: boolean }> = {
+  NOVO:                  { bg: "rgba(0,175,255,0.08)",  border: "rgba(0,175,255,0.35)",   text: "#00AFFF" },
+  ANALISADO:             { bg: "rgba(136,136,136,0.08)",border: "rgba(136,136,136,0.25)", text: "#888888" },
+  "PRONTO PARA CAMPANHA":{ bg: "rgba(18,211,107,0.08)", border: "rgba(18,211,107,0.35)",  text: "#12D36B" },
+  PRONTO:                { bg: "rgba(18,211,107,0.08)", border: "rgba(18,211,107,0.35)",  text: "#12D36B" },
+  "AGUARDANDO REVISÃO":  { bg: "rgba(255,212,0,0.08)",  border: "rgba(255,212,0,0.35)",   text: "#FFD400" },
+  AGUARDANDO:            { bg: "rgba(255,212,0,0.08)",  border: "rgba(255,212,0,0.35)",   text: "#FFD400" },
+  ENVIADO:               { bg: "rgba(18,211,107,0.12)", border: "rgba(18,211,107,0.5)",   text: "#12D36B" },
+  ALTA:                  { bg: "rgba(224,53,53,0.08)",  border: "rgba(224,53,53,0.35)",   text: "#E03535" },
+  "MÉDIA":               { bg: "rgba(255,212,0,0.08)",  border: "rgba(255,212,0,0.35)",   text: "#FFD400" },
+  MEDIA:                 { bg: "rgba(255,212,0,0.08)",  border: "rgba(255,212,0,0.35)",   text: "#FFD400" },
+  BAIXA:                 { bg: "rgba(136,136,136,0.08)",border: "rgba(136,136,136,0.25)", text: "#666666" },
+  ATIVA:                 { bg: "rgba(18,211,107,0.1)",  border: "#12D36B",                text: "#12D36B", dot: true },
+  PAUSADA:               { bg: "rgba(255,107,0,0.08)",  border: "rgba(255,107,0,0.35)",   text: "#FF6B00" },
+  AGENDADA:              { bg: "rgba(0,175,255,0.08)",  border: "rgba(0,175,255,0.35)",   text: "#00AFFF" },
+  "CONCLUÍDA":           { bg: "rgba(255,255,255,0.04)",border: "#333333",                text: "#666666" },
+  CONCLUIDA:             { bg: "rgba(255,255,255,0.04)",border: "#333333",                text: "#666666" },
+  PENDENTE:              { bg: "rgba(255,212,0,0.08)",  border: "rgba(255,212,0,0.35)",   text: "#FFD400" },
+  APROVADA:              { bg: "rgba(18,211,107,0.08)", border: "rgba(18,211,107,0.35)",  text: "#12D36B" },
+  REJEITADA:             { bg: "rgba(224,53,53,0.08)",  border: "rgba(224,53,53,0.35)",   text: "#E03535" },
 }
 
-const statusConfig: Record<
-  Status,
-  { bg: string; text: string; border: string }
-> = {
-  NOVO: {
-    bg: "bg-[#FFD400]/10",
-    text: "text-[#FFD400]",
-    border: "border-[#FFD400]/30",
-  },
-  ANALISADO: {
-    bg: "bg-[#00B2FF]/10",
-    text: "text-[#00B2FF]",
-    border: "border-[#00B2FF]/30",
-  },
-  PRONTO: {
-    bg: "bg-[#00CC66]/10",
-    text: "text-[#00CC66]",
-    border: "border-[#00CC66]/30",
-  },
-  AGUARDANDO: {
-    bg: "bg-[#FF6B00]/10",
-    text: "text-[#FF6B00]",
-    border: "border-[#FF6B00]/30",
-  },
-  ENVIADO: {
-    bg: "bg-[#888888]/10",
-    text: "text-[#888888]",
-    border: "border-[#888888]/30",
-  },
-  ATIVA: {
-    bg: "bg-[#00CC66]/10",
-    text: "text-[#00CC66]",
-    border: "border-[#00CC66]/30",
-  },
-  PAUSADA: {
-    bg: "bg-[#FF6B00]/10",
-    text: "text-[#FF6B00]",
-    border: "border-[#FF6B00]/30",
-  },
-  AGENDADA: {
-    bg: "bg-[#00B2FF]/10",
-    text: "text-[#00B2FF]",
-    border: "border-[#00B2FF]/30",
-  },
-  "CONCLUÍDA": {
-    bg: "bg-[#555555]/20",
-    text: "text-[#888888]",
-    border: "border-[#555555]/30",
-  },
-  PENDENTE: {
-    bg: "bg-[#FFD400]/10",
-    text: "text-[#FFD400]",
-    border: "border-[#FFD400]/30",
-  },
-  APROVADA: {
-    bg: "bg-[#00CC66]/10",
-    text: "text-[#00CC66]",
-    border: "border-[#00CC66]/30",
-  },
-  REJEITADA: {
-    bg: "bg-[#FF4444]/10",
-    text: "text-[#FF4444]",
-    border: "border-[#FF4444]/30",
-  },
-}
-
-export function StatusBadge({ status, className, size = "md" }: StatusBadgeProps) {
-  const config = statusConfig[status] ?? statusConfig["NOVO"]
-
+export function StatusBadge({ status }: { status: string }) {
+  const key = status.toUpperCase()
+  const s = STATUS_STYLES[key] ?? STATUS_STYLES["ANALISADO"]
   return (
-    <span
-      className={clsx(
-        "inline-flex items-center gap-1 rounded-none border font-display font-bold uppercase tracking-widest",
-        size === "sm" ? "text-[9px] px-1.5 py-0.5" : "text-[10px] px-2 py-1",
-        config.bg,
-        config.text,
-        config.border,
-        className
+    <span style={{
+      background: s.bg, border: `1px solid ${s.border}`, color: s.text,
+      fontFamily: "var(--font-display)", fontSize: 9, fontWeight: 700,
+      textTransform: "uppercase", letterSpacing: "0.08em",
+      padding: "2px 7px", borderRadius: 0,
+      display: "inline-flex", alignItems: "center", gap: 4, whiteSpace: "nowrap",
+    }}>
+      {s.dot && (
+        <span style={{ width: 5, height: 5, borderRadius: "50%", background: s.text, display: "inline-block", animation: "pulse-dot 2s infinite" }} />
       )}
-    >
-      <span
-        className={clsx(
-          "rounded-none flex-shrink-0",
-          size === "sm" ? "w-1 h-1" : "w-1.5 h-1.5",
-          config.text.replace("text-", "bg-")
-        )}
-        aria-hidden="true"
-      />
       {status}
     </span>
   )
 }
-
-export type { Status }

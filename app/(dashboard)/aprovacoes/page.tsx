@@ -162,9 +162,8 @@ export default function AprovacoesPage() {
               label="Pendentes"
               value={27}
               icon={Clock}
-              iconColor="yellow"
-              trendLabel="+5 desde ontem"
-              className="border-0 h-full"
+              color="yellow"
+              trend={5}
             />
           </div>
 
@@ -174,10 +173,8 @@ export default function AprovacoesPage() {
               label="Aprovadas Hoje"
               value={18}
               icon={CheckCircle}
-              iconColor="white"
+              color="white"
               trend={20}
-              trendLabel="vs ontem"
-              className="border-0 h-full"
             />
           </div>
 
@@ -187,9 +184,7 @@ export default function AprovacoesPage() {
               label="Revisão Urgente"
               value={3}
               icon={AlertTriangle}
-              iconColor="yellow"
-              trendLabel="Requer atenção"
-              className="border-0 h-full"
+              color="yellow"
             />
           </div>
 
@@ -200,8 +195,7 @@ export default function AprovacoesPage() {
               value={87}
               suffix="%"
               icon={Target}
-              iconColor="blue"
-              className="border-0 h-full"
+              color="blue"
             />
           </div>
 
@@ -511,7 +505,7 @@ Seria possível uma conversa rápida de 15 minutos essa semana?`}
                     <div key={i} className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
                         <p className="text-[9px] font-mono text-[#888888] truncate">{item.name}</p>
-                        <StatusBadge status={item.status} size="sm" />
+                        <StatusBadge status={item.status} />
                       </div>
                       <p className="text-[8px] font-mono text-[#444444] flex-shrink-0 text-right">{item.time}</p>
                     </div>
